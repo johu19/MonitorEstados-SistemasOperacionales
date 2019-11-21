@@ -1,6 +1,6 @@
 package co.edu.icesi.repositories;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 
 import org.springframework.stereotype.Repository;
@@ -27,8 +27,12 @@ public class ProcessRepository {
 	}
 	
 	
-	public Iterable<Process> getAllProcess(){
+	public Collection<Process> getAllProcess(){
 		return processes.values();
+	}
+	
+	public void removeProcess(String id) {
+		processes.remove(id);
 	}
 	
 	
