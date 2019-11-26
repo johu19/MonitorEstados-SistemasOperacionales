@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Hashtable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -112,6 +113,9 @@ public class ProcessService {
 		
 		try {
 			
+			repos.setProcesses(new Hashtable<String, Process>());
+			repos.getProcesses().clear();
+			  
 			  String command = "powershell.exe  Get-Process | select Id,ProcessName | sort -Property id | Format-Table -HideTableHeaders";
 			  
 			  java.lang.Process pShell = Runtime.getRuntime().exec(command);
@@ -121,96 +125,62 @@ public class ProcessService {
 			  String line="";
 			  
 			  BufferedReader reader = new BufferedReader(new InputStreamReader(pShell.getInputStream()));
-			  
-			 
-			  
+
 			  while ((line = reader.readLine()) != null) {
 			
-				  
-				 String[] temp=line.split(" ");
-				 
-				 int cant=0;
-				 String[] info=new String[2];
-				 
-				 
-				 cant=0;
-				 for(String st : temp) {
-					 if(!st.equals(" ") && cant<2) {
-						info[cant]=st;
-						cant++;
-					 }
-				 }
-				  
-				  
-				   System.out.println(temp.length+" "+info[0]+" "+info[1]);
-				   
+				 line=line.trim();
 
-				   
-//				   String[] name= line.split(" : ");
-//				   line=reader.readLine();
-//				   String[] id= line.split(" : ");
-//				   line=reader.readLine();
-				   
-				   
-//				   line = line.replaceAll("\\s", ":");
-//				   System.out.println(line);
-				
-//				   String[] parts = line.split("(?<=\\D)(?=\\d)");
-//				   System.out.println(parts[0]+" "+parts[1]);
-				   
-//				   Process process= new Process();
-//				   process.setProcessName(name[1]);
-//				   process.setId(id[1]);
-//				   
-//				   System.out.println(process.getId());
-//				   System.out.println(process.getProcessName());
-//				   
-//				   repos.addProcess(process);
-				   
-//				   cont++;
-						
+				 String[] temp=line.split(" ");
+
+				 if(temp.length==2) {
+					 Process process= new Process();
+					 process.setId(temp[0]);
+					 process.setProcessName(temp[1]);
+
+					 repos.addProcess(process);
+				 }		 
 			   
 			  }
 			  reader.close();
 		}catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		
-//		Collection<Process> processes = repos.getAllProcess();
-//
-//		int[] ids = new int[processes.size()];
-//
-//		int i = 0;
-//		for (Process process : processes) {
-//			System.out.println(process.getId());
-//			ids[i] = Integer.parseInt(process.getId());
-//			i++;
-//		}
-//
-//		Arrays.sort(ids);
-//
-//		ArrayList<Process> sortedProcesses = new ArrayList<Process>();
-//
-//		for (int h = 0; h < ids.length; h++) {
-//			String currentID = ids[h] + "";
-//			for (Process process : processes) {
-//				if (process.getId().equals(currentID)) {
-//					sortedProcesses.add(process);
-//				}
-//			}
-//
-//		}
+		Collection<Process> processes = repos.getAllProcess();
 
-		return null;
+		int[] ids = new int[processes.size()];
+
+		int i = 0;
+		for (Process process : processes) {
+			ids[i] = Integer.parseInt(process.getId());
+			i++;
+		}
+
+		Arrays.sort(ids);
+
+		ArrayList<Process> sortedProcesses = new ArrayList<Process>();
+
+		for (int h = 0; h < ids.length; h++) {
+			String currentID = ids[h] + "";
+			for (Process process : processes) {
+				if (process.getId().equals(currentID)) {
+					sortedProcesses.add(process);
+				}
+			}
+
+		}
+
+		return sortedProcesses;
 	}
 
 	public void stopWindowsProcess(String id) {
-		// Stop-Process -Id 7664
 		
-		String command = "Stop-Process -Id " +id;
-		repos.removeProcess(id);
+		System.out.println("el id del proceso a borrar es : "+id);
+		String command = "powershell.exe Stop-Process -Id " +id;
+		
 		try {
 			java.lang.Process p = Runtime.getRuntime().exec(command);
+			repos.removeProcess(id);
 
 		} catch (Exception e) {
 			e.printStackTrace();

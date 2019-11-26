@@ -12,6 +12,16 @@ public class ProcessRepository {
 	
 	private Hashtable<String, Process> processes;
 	
+	public Hashtable<String, Process> getProcesses() {
+		return processes;
+	}
+
+
+	public void setProcesses(Hashtable<String, Process> processes) {
+		this.processes = processes;
+	}
+
+
 	public ProcessRepository() {
 		processes=new Hashtable<String, Process>();
 	}
