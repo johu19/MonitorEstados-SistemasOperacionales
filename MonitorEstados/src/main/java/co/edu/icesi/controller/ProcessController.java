@@ -26,6 +26,18 @@ public class ProcessController {
 		service.stopLinuxProcess(id);
 		return "redirect:/linux/";
 	}
+	
+	@GetMapping("/windows/")
+	public String indexWindowsProcess(Model model) {
+		model.addAttribute("processes",service.findWindowsProcess());
+		return "windows/index";
+	}
+	
+	@GetMapping("windows/stop/{id}")
+	public String stopWindowsProcess(@PathVariable("id") String id) {
+		service.stopWindowsProcess(id);
+		return "redirect:/windows/";
+	}
 
 	
 }

@@ -109,7 +109,16 @@ public class ProcessService {
 	
 
 	public Iterable<Process> findWindowsProcess() {
-		// TODO
+		// Stop-Process -Id 7664
+		try {
+			//Getting the version
+			  String command = "powershell.exe  $PSVersionTable.PSVersion";
+			  // Executing the command
+			  java.lang.Process powerShellProcess = Runtime.getRuntime().exec(command);
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		
 		return null;
 	}
 
