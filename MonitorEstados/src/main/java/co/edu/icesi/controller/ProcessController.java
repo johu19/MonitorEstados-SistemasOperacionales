@@ -17,8 +17,13 @@ public class ProcessController {
 	
 	@GetMapping("/linux/")
 	public String indexLinuxProcess(Model model) {
-		model.addAttribute("processes", service.findLinuxProcess());
-		return "linux/index";
+		if(!System.getProperty("os.name").equals("Windows 10")) {
+			model.addAttribute("processes", service.findLinuxProcess());
+			return "linux/index";
+		}else {
+			return "index";
+		}
+		
 	}
 	
 	@GetMapping("/linux/stop/{id}")
@@ -29,8 +34,13 @@ public class ProcessController {
 	
 	@GetMapping("/windows/")
 	public String indexWindowsProcess(Model model) {
-		model.addAttribute("processes",service.findWindowsProcess());
-		return "windows/index";
+		if(System.getProperty("os.name").equals("Windows 10")) {
+			model.addAttribute("processes",service.findWindowsProcess());
+			return "windows/index";
+		}else {
+			return "index";
+		}
+		
 	}
 	
 	@GetMapping("windows/stop/{id}")
