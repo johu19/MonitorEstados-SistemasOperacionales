@@ -60,37 +60,11 @@ public class ProcessService {
 
 			}
 
-			Collection<Process> processes = repos.getAllProcess();
-
-			int[] ids = new int[processes.size()];
-
-			int i = 0;
-			for (Process process : processes) {
-				ids[i] = Integer.parseInt(process.getId());
-				i++;
-			}
-
-			Arrays.sort(ids);
-
-			ArrayList<Process> sortedProcesses = new ArrayList<Process>();
-
-			for (int h = 0; h < ids.length; h++) {
-				String currentID = ids[h] + "";
-				for (Process process : processes) {
-					if (process.getId().equals(currentID)) {
-						sortedProcesses.add(process);
-					}
-				}
-
-			}
-
-			return sortedProcesses;
-
 		} catch (Exception e) {
 
 		}
 
-		return new ArrayList<Process>();
+		return sortAllProcesses();
 	}
 
 	public void stopLinuxProcess(String id) {
@@ -105,47 +79,11 @@ public class ProcessService {
 	}
 	
 	public Iterable<Process> getAllProcesses(){
-		return repos.getAllProcess();
+		return sortAllProcesses();
 	}
 	
-
-	public Iterable<Process> findWindowsProcess() {
-		
-		try {
-			
-			repos.setProcesses(new Hashtable<String, Process>());
-			repos.getProcesses().clear();
-			  
-			  String command = "powershell.exe  Get-Process | select Id,ProcessName | sort -Property id | Format-Table -HideTableHeaders";
-			  
-			  java.lang.Process pShell = Runtime.getRuntime().exec(command);
-		
-			  pShell.getOutputStream().close();
-			  
-			  String line="";
-			  
-			  BufferedReader reader = new BufferedReader(new InputStreamReader(pShell.getInputStream()));
-
-			  while ((line = reader.readLine()) != null) {
-			
-				 line=line.trim();
-
-				 String[] temp=line.split(" ");
-
-				 if(temp.length==2) {
-					 Process process= new Process();
-					 process.setId(temp[0]);
-					 process.setProcessName(temp[1]);
-
-					 repos.addProcess(process);
-				 }		 
-			   
-			  }
-			  reader.close();
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+	
+	public Iterable<Process> sortAllProcesses(){
 		Collection<Process> processes = repos.getAllProcess();
 
 		int[] ids = new int[processes.size()];
@@ -169,8 +107,48 @@ public class ProcessService {
 			}
 
 		}
-
 		return sortedProcesses;
+	}
+
+	public Iterable<Process> findWindowsProcess() {
+		
+		try {
+
+			  
+			  String command = "powershell.exe  Get-Process | select Id,ProcessName | sort -Property id | Format-Table -HideTableHeaders";
+			  
+			  java.lang.Process pShell = Runtime.getRuntime().exec(command);
+		
+			  pShell.getOutputStream().close();
+			  
+			  String line="";
+			  
+			  BufferedReader reader = new BufferedReader(new InputStreamReader(pShell.getInputStream()));
+
+			  while ((line = reader.readLine()) != null) {
+			
+				 line=line.trim();
+
+				 String[] temp=line.split(" ");
+
+				 if(temp.length==2) {
+					 
+					 Process process= new Process();
+					 process.setId(temp[0]);
+					 process.setProcessName(temp[1]);
+
+					 repos.addProcess(process);
+				 }		 
+			   
+			  }
+			  reader.close();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+
+		return sortAllProcesses();
 	}
 
 	public void stopWindowsProcess(String id) {

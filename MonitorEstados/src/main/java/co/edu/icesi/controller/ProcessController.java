@@ -34,9 +34,10 @@ public class ProcessController {
 	}
 	
 	@GetMapping("windows/stop/{id}")
-	public String stopWindowsProcess(@PathVariable("id") String id) {
+	public String stopWindowsProcess(@PathVariable("id") String id, Model model) {
 		service.stopWindowsProcess(id);
-		return "redirect:/windows/";
+		model.addAttribute("processes",service.getAllProcesses());
+		return "windows/index";
 	}
 
 	
